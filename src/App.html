@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Keyword Prefix Checker</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script crossorigin src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+
+    const { useState, useEffect } = React;
+
+    function App() {
+      const [data, setData] = useState([]);
+      const [query, setQuery] = useState("apple,banana,car");
+
+      useEffect(() => {
+        fetch(`http://localhost:5500/prefixes?keywords=${query}`)
+          .then(res => res.json())
+          .then(setData)
+          .catch(console.error);
+      }, [query]);
+
+      return (
+        <div style={{ fontFamily: "Arial", padding: "20px" }}>
+          <h1>Keyword Prefix Checker</h1>
+          <input
+            type="text"
+            value={query}
+            onChange={e => setQuery(e.target.value)}
+            placeholder="Enter comma-separated keywords"
+            style={{ padding: "8px", width: "300px" }}
+          />
+          <ul>
+            {data.map((item, index) => (
+              <li key={index}>
+                <strong>{item.Keyword}</strong> - Status: {item.status} - Prefix: <code>{item.prefix}</code>
+              </li>
+            ))}
+          </ul>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+
+  </script>
+</body>
+</html>
